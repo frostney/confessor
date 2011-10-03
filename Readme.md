@@ -5,6 +5,9 @@ Command-line library for FreePascal/Delphi
 
 Colipas is inspired by Commander (http://visionmedia.github.com/commander/) and Commander.js (http://tjholowaychuk.com/post/9103188408/commander-js-nodejs-command-line-interfaces-made-easy). Originally, I wanted to name the project Commander.pas, but because it's not a 1:1 port of the Commander interface, Colipas was the next name I came up with.
 
+Sorry, if a few functions/procedures are a bit verbose. I've been doing a lot of Objective-C lately.
+
+
 
 Usage
 -----

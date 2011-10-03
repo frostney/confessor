@@ -4,6 +4,13 @@
 
   Command-line library for FreePascal/Delphi
 
+  Colipas is inspired by Commander (http://visionmedia.github.com/commander/) and
+  Commander.js (http://tjholowaychuk.com/post/9103188408/commander-js-nodejs-command-line-interfaces-made-easy).
+  Originally, I wanted to name the project Commander.pas, but because it's not a 1:1 port of the Commander interface,
+  Colipas was the next name I came up with.
+
+  Sorry, if a few functions/procedures are a bit verbose. I've been doing a lot of Objective-C lately.
+
 
   Usage
   -----
@@ -60,7 +67,7 @@ uses
 
 type
   // Callbacks
-  TCmdOptionCallback = procedure() of object;
+  TCmdOptionCallback = procedure(cbResult: String) of object;
   TCmdChooseCallback = procedure(cbResult: Integer) of object;
   TCmdPromptCallback = procedure(cbResult: String) of object;
   TCmdPasswordCallback = procedure(cbResult: String) of object;
@@ -93,6 +100,13 @@ type
     procedure Option(aChar: Char; aString, aDescription: String; aCallback: TCmdOptionCallback); Overload;
     procedure Option(aChars: array of Char; aStrings: array of String; aDescription: String; aCallback: TCmdOptionCallback);
 
+    procedure OptionWithParameter(aChar: Char; aDescription: String; aCallback: TCmdOptionCallback); Overload;
+    procedure OptionWithParameter(aChars: array of Char; aDescription: String; aCallback: TCmdOptionCallback); Overload;
+    procedure OptionWithParameter(aString, aDescription: String; aCallback: TCmdOptionCallback); Overload;
+    procedure OptionWithParameter(aStrings: array of String; aDescription: String; aCallback: TCmdOptionCallback);
+    procedure OptionWithParameter(aChar: Char; aString, aDescription: String; aCallback: TCmdOptionCallback); Overload;
+    procedure OptionWithParameter(aChars: array of Char; aStrings: array of String; aDescription: String; aCallback: TCmdOptionCallback); Overload;
+
     procedure Choose(aChooseText: String; aList: array of String; aCallback: TCmdChooseCallback); Overload;
     procedure Choose(aChooseText: String; aList: array of Char; aCallback: TCmdChooseCallback); Overload;
     procedure Choose(aChooseText: String; aList: array of Single; aCallback: TCmdChooseCallback); Overload;
@@ -101,7 +115,7 @@ type
     procedure Prompt(aPromptText: String; aCallback: TCmdPromptCallback); Overload;
     procedure Prompt(aPromptText, aDefaultText: String; aCallback: TCmdPromptCallback); Overload;
 
-    procedure Password(aPasswordText: String; aMaskChar: Char; aCallback: TCmdPasswordCallback);
+    //procedure Password(aPasswordText: String; aMaskChar: Char; aCallback: TCmdPasswordCallback);
 
     procedure Confirm(aConfirmText: String; aCallback: TCmdConfirmCallback); Overload;
     procedure Confirm(aConfirmText, aDefaultText: String; aCallback: TCmdConfirmCallback); Overload;
@@ -313,11 +327,11 @@ begin
 
 end;
 
-procedure TCommandApp.Password(aPasswordText: String; aMaskChar: Char;
+(*procedure TCommandApp.Password(aPasswordText: String; aMaskChar: Char;
   aCallback: TCmdPasswordCallback);
 begin
 
-end;
+end;*)
 
 procedure TCommandApp.Confirm(aConfirmText: String;
   aCallback: TCmdConfirmCallback);
