@@ -1,0 +1,57 @@
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.ppu
+*.dcu
+*.so
+*.compiled
+*.identcache
+*.local
+*.cache
+*.res
+*.app
+*.rst
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store?
+.DS_Store
+ehthumbs.db
+Thumbs.db
+
+# Additional stuff #
+####################
+bin/*.html
+bin/*.a
+bin/*.dbg
+bin/*.or
+bin/main
+_rawdata
+
+# Excluded files #
+##################
+!lib/MacOSX/libSDLMain.a
+!_rawdata/Finished
