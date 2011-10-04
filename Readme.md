@@ -8,6 +8,17 @@ Colipas is inspired by Commander (http://visionmedia.github.com/commander/) and 
 Sorry, if a few functions/procedures are a bit verbose. I've been doing a lot of Objective-C lately.
 
 
+Features
+--------
+
+- Uses callbacks to actions
+- Utilize lists
+- Confirm messages (yes/no)
+- Prompts with additional default statement
+- Add options to your command-line apps as one or multiple char, one or more strings or both of those options
+- Options with parameter support
+- Supports LibNotify and Growl (through GrowlNotify) if available
+
 
 Usage
 -----

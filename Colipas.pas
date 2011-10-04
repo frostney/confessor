@@ -12,6 +12,18 @@
   Sorry, if a few functions/procedures are a bit verbose. I've been doing a lot of Objective-C lately.
 
 
+  Features
+  --------
+
+  - Uses callbacks to actions
+  - Utilize lists
+  - Confirm messages (yes/no)
+  - Prompts with additional default statement
+  - Add options to your command-line apps as one or multiple char, one or more strings or both of those options
+  - Options with parameter support
+  - Supports LibNotify and Growl (through GrowlNotify) if available
+
+
   Usage
   -----
     1. Include Colipas in your application
@@ -67,67 +79,82 @@ uses
 
 type
   // Callbacks
-  TCmdOptionCallback = procedure(cbResult: String) of object;
+  TCmdOptionCallback = procedure(cbResult: AnsiString) of object;
   TCmdChooseCallback = procedure(cbResult: Integer) of object;
-  TCmdPromptCallback = procedure(cbResult: String) of object;
-  TCmdPasswordCallback = procedure(cbResult: String) of object;
+  TCmdPromptCallback = procedure(cbResult: AnsiString) of object;
+  TCmdPasswordCallback = procedure(cbResult: AnsiString) of object;
   TCmdConfirmCallback = procedure(cbResult: Boolean) of object;
 
   TPrintOutputOption = (poConsole, poGrowl, poLibNotify);
   TPrintOutputOptions = set of TPrintOutputOption;
 
   { TCommandApp }
-
   TCommandApp = class
   private
     fCommandStrList: TStringList; //< Stores all available options
 
     function IsGrowlNotifyInstalled(): Boolean; //< Checks if Growl is installed (Mac OS X only)
     function IsLibNotifyInstalled(): Boolean; //< Check is libNotify is installed (Linux only)
+
+    procedure AddParamsToList(aChars: array of Char; aStrings: array of AnsiString; aDescription: AnsiString; aParameterName: String = '');
   protected
-    fName, fVersion: String;
+    fName, fVersion: AnsiString;
+
+    function HasParam(aChars: array of Char; aStrings: array of AnsiString): Boolean; Overload;
+    function HasParam(aChar: Char; aString: AnsiString): Boolean; Overload;
+    function HasParam(aChar: Char): Boolean; Overload;
+    function HasParam(aString: AnsiString): Boolean; Overload;
+
+    function GetParamPos(aChars: array of Char; aStrings: array of AnsiString): Integer; Overload;
+    function GetParamPos(aChar: Char; aString: AnsiString): Integer; Overload;
+    function GetParamPos(aChar: Char): Integer; Overload;
+    function GetParamPos(aString: AnsiString): Integer; Overload;
+
+    procedure ShowHelp(cbResult: AnsiString);
+    procedure ShowVersion(cbResult: AnsiString);
   public
     constructor Create();
     destructor Destroy; Override;
 
-    procedure Print(aString: String; OutputOption: TPrintOutputOptions = [poConsole]); Overload;
-    procedure Print(aString: String; Args: array of const; OutputOption: TPrintOutputOptions); Overload;
+    procedure Print(aString: AnsiString); Overload;
+    procedure Print(aString: AnsiString; Args: array of const; OutputOption: TPrintOutputOptions = [poConsole]); Overload;
 
-    procedure Option(aChar: Char; aDescription: String; aCallback: TCmdOptionCallback); Overload;
-    procedure Option(aChars: array of Char; aDescription: String; aCallback: TCmdOptionCallback); Overload;
-    procedure Option(aString, aDescription: String; aCallback: TCmdOptionCallback); Overload;
-    procedure Option(aStrings: array of String; aDescription: String; aCallback: TCmdOptionCallback);
-    procedure Option(aChar: Char; aString, aDescription: String; aCallback: TCmdOptionCallback); Overload;
-    procedure Option(aChars: array of Char; aStrings: array of String; aDescription: String; aCallback: TCmdOptionCallback);
+    procedure Option(aChar: Char; aDescription: AnsiString; aCallback: TCmdOptionCallback); Overload;
+    procedure Option(aChars: array of Char; aDescription: AnsiString; aCallback: TCmdOptionCallback); Overload;
+    procedure Option(aString, aDescription: AnsiString; aCallback: TCmdOptionCallback); Overload;
+    procedure Option(aStrings: array of AnsiString; aDescription: AnsiString; aCallback: TCmdOptionCallback);
+    procedure Option(aChar: Char; aString, aDescription: AnsiString; aCallback: TCmdOptionCallback); Overload;
+    procedure Option(aChars: array of Char; aStrings: array of AnsiString; aDescription: AnsiString; aCallback: TCmdOptionCallback);
 
-    procedure OptionWithParameter(aChar: Char; aDescription: String; aCallback: TCmdOptionCallback); Overload;
-    procedure OptionWithParameter(aChars: array of Char; aDescription: String; aCallback: TCmdOptionCallback); Overload;
-    procedure OptionWithParameter(aString, aDescription: String; aCallback: TCmdOptionCallback); Overload;
-    procedure OptionWithParameter(aStrings: array of String; aDescription: String; aCallback: TCmdOptionCallback);
-    procedure OptionWithParameter(aChar: Char; aString, aDescription: String; aCallback: TCmdOptionCallback); Overload;
-    procedure OptionWithParameter(aChars: array of Char; aStrings: array of String; aDescription: String; aCallback: TCmdOptionCallback); Overload;
+    procedure OptionWithParameter(aChar: Char; aDescription, aParameterName: AnsiString; aCallback: TCmdOptionCallback); Overload;
+    procedure OptionWithParameter(aChars: array of Char; aDescription, aParameterName: AnsiString; aCallback: TCmdOptionCallback); Overload;
+    procedure OptionWithParameter(aString, aDescription, aParameterName: AnsiString; aCallback: TCmdOptionCallback); Overload;
+    procedure OptionWithParameter(aStrings: array of AnsiString; aDescription, aParameterName: AnsiString; aCallback: TCmdOptionCallback);
+    procedure OptionWithParameter(aChar: Char; aString, aDescription, aParameterName: AnsiString; aCallback: TCmdOptionCallback); Overload;
+    procedure OptionWithParameter(aChars: array of Char; aStrings: array of AnsiString; aDescription, aParameterName: AnsiString; aCallback: TCmdOptionCallback); Overload;
 
-    procedure Choose(aChooseText: String; aList: array of String; aCallback: TCmdChooseCallback); Overload;
-    procedure Choose(aChooseText: String; aList: array of Char; aCallback: TCmdChooseCallback); Overload;
-    procedure Choose(aChooseText: String; aList: array of Single; aCallback: TCmdChooseCallback); Overload;
-    procedure Choose(aChooseText: String; aList: array of Integer; aCallback: TCmdChooseCallback); Overload;
+    procedure Choose(aChooseText: AnsiString; aList: array of AnsiString; aDefaultValue: Integer; aCallback: TCmdChooseCallback); Overload;
+    procedure Choose(aChooseText: AnsiString; aList: array of Char; aDefaultValue: Integer; aCallback: TCmdChooseCallback); Overload;
+    procedure Choose(aChooseText: AnsiString; aList: array of Single; aDefaultValue: Integer; aCallback: TCmdChooseCallback); Overload;
+    procedure Choose(aChooseText: AnsiString; aList: array of Integer; aDefaultValue: Integer; aCallback: TCmdChooseCallback); Overload;
 
-    procedure Prompt(aPromptText: String; aCallback: TCmdPromptCallback); Overload;
-    procedure Prompt(aPromptText, aDefaultText: String; aCallback: TCmdPromptCallback); Overload;
+    procedure Prompt(aPromptText: AnsiString; aCallback: TCmdPromptCallback); Overload;
+    procedure Prompt(aPromptText, aDefaultText: AnsiString; aCallback: TCmdPromptCallback); Overload;
 
-    //procedure Password(aPasswordText: String; aMaskChar: Char; aCallback: TCmdPasswordCallback);
+    //procedure Password(aPasswordText: AnsiString; aMaskChar: Char; aCallback: TCmdPasswordCallback);
 
-    procedure Confirm(aConfirmText: String; aCallback: TCmdConfirmCallback); Overload;
-    procedure Confirm(aConfirmText, aDefaultText: String; aCallback: TCmdConfirmCallback); Overload;
+    procedure Confirm(aConfirmText: AnsiString; aCallback: TCmdConfirmCallback); Overload;
+    procedure Confirm(aConfirmText: AnsiString; aDefaultValue: Boolean; aCallback: TCmdConfirmCallback); Overload;
 
     procedure Execute(); virtual;
   published
-    property Name: String read fName write fName;
-    property Version: String read fVersion write fVersion;
+    property Name: AnsiString read fName write fName;
+    property Version: AnsiString read fVersion write fVersion;
   end;
 
   // https://gist.github.com/1208591
-  function CmdToString(Command: AnsiString): TStringList;
+  function CmdToString(Command: AnsiString; var CmdResult: Integer): TStringList; Overload;
+  function CmdToString(Command: AnsiString): TStringList; Overload;
 
 // Messages
 resourcestring
@@ -137,7 +164,7 @@ resourcestring
 implementation
 
 // https://gist.github.com/1208591
-function CmdToString(Command: AnsiString): TStringList;
+function CmdToString(Command: AnsiString; var CmdResult: Integer): TStringList;
 var
   formattedDateTime: AnsiString = '';
   Filename: AnsiString = '';
@@ -149,7 +176,7 @@ begin
   FileName := GetTempDir(true) + formattedDateTime + '.txt';
 
   // Create temporary file in temporary folder with timestamp as filename
-  fpSystem(Command + ' > ' + FileName);
+  CmdResult := fpSystem(Command + ' > ' + FileName);
 
   // Create string list
   tmpStringList := TStringList.Create;
@@ -165,6 +192,13 @@ begin
   {$ELSE}
   Result := nil;
   {$ENDIF}
+end;
+
+function CmdToString(Command: AnsiString): TStringList;
+var
+  tmpInteger: Integer;
+begin
+  Result := CmdToString(Command, tmpInteger);
 end;
 
 { TCommandApp }
@@ -183,8 +217,6 @@ begin
 end;
 
 function TCommandApp.IsGrowlNotifyInstalled(): Boolean;
-var
- tmpStringList: TStringList;
 begin
   Result := false;
 
@@ -202,16 +234,154 @@ begin
   {$ENDIF}
 end;
 
-procedure TCommandApp.Print(aString: String; OutputOption: TPrintOutputOptions = [poConsole]);
+procedure TCommandApp.AddParamsToList(aChars: array of Char;
+  aStrings: array of AnsiString; aDescription: AnsiString;
+  aParameterName: String);
+var
+ tmpString: String;
+ i, j: Integer;
 begin
-  Print(aString, [], OutputOption);
+  tmpString := '';
+
+  for i := 0 to Length(aChars) - 1 do
+  begin
+    tmpString := tmpString + '-' + aChars[i];
+    if ((Length(aChars) > 0) and (i < Length(aChars) - 1)) then tmpString := ', ';
+  end;
+
+  if Length(aStrings) > 0 then
+  begin
+    tmpString := tmpString + ',  ';
+
+    for j := 0 to Length(aStrings) - 1 do
+    begin
+      tmpString := tmpString + '--' + aStrings[j];
+      if ((Length(aStrings) > 0) and (j < Length(aStrings) - 1)) then tmpString := ', ';
+    end;
+  end;
+
+  if (aParameterName <> '') then tmpString := tmpString + ' <' + aParameterName + '>';
+
+  tmpString := tmpString + '\t ';
+  tmpString := tmpString + aDescription;
+  fCommandStrList.Add(tmpString);
+
 end;
 
-procedure TCommandApp.Print(aString: String; Args: array of const; OutputOption: TPrintOutputOptions);
+function TCommandApp.HasParam(aChars: array of Char; aStrings: array of AnsiString
+  ): Boolean;
+begin
+  if GetParamPos(aChars, aStrings) = -1 then Result := false
+  else Result := true;
+end;
+
+function TCommandApp.HasParam(aChar: Char; aString: AnsiString): Boolean;
+begin
+  Result := HasParam([aChar], [aString]);
+end;
+
+function TCommandApp.HasParam(aChar: Char): Boolean;
+begin
+  Result := HasParam([aChar], []);
+end;
+
+function TCommandApp.HasParam(aString: AnsiString): Boolean;
+begin
+  Result := HasParam([], [aString]);
+end;
+
+function TCommandApp.GetParamPos(aChars: array of Char;
+  aStrings: array of AnsiString): Integer;
+var
+  i, j, k: Integer;
+begin
+ Result := -1;
+
+  if ParamCount >= 1 then
+  begin
+    for i := 1 to ParamCount do
+    begin
+
+      if Length(aChars) > 0 then
+      begin
+        // Check for chars
+        for j := 0 to Length(aChars) - 1 do
+        begin
+          if (ParamStr(i) = ('-' + aChars[j])) then
+          begin
+            Result := i;
+            Exit;
+          end;
+        end;
+      end;
+
+      if Length(aStrings) > 0 then
+      begin
+        // Check for strings
+        for k := 0 to Length(aStrings) - 1 do
+        begin
+          if (ParamStr(i) = ('--' + aStrings[k])) then
+          begin
+            Result := i;
+            Exit;
+          end;
+        end;
+      end;
+
+    end;
+  end;
+end;
+
+function TCommandApp.GetParamPos(aChar: Char; aString: AnsiString): Integer;
+begin
+  Result := GetParamPos([aChar], [aString]);
+end;
+
+function TCommandApp.GetParamPos(aChar: Char): Integer;
+begin
+  Result := GetParamPos([aChar], []);
+end;
+
+function TCommandApp.GetParamPos(aString: AnsiString): Integer;
+begin
+  Result := GetParamPos([], [aString]);
+end;
+
+procedure TCommandApp.ShowHelp(cbResult: AnsiString);
+var
+ i: Integer;
+begin
+  Print('\nUsage: %s [options]\n', [Self.Name]);
+
+  Print('Options:\n');
+  for i := 0 to fCommandStrList.Count - 1 do
+  begin
+    Print('  ' + fCommandStrList.Strings[i]);
+  end;
+  Print('\n');
+end;
+
+procedure TCommandApp.ShowVersion(cbResult: AnsiString);
+begin
+  Print('\n%s\nVersion: %s\n', [Self.Name, Self.Version]);
+end;
+
+procedure TCommandApp.Print(aString: AnsiString);
+begin
+  Print(aString, []);
+end;
+
+procedure TCommandApp.Print(aString: AnsiString; Args: array of const; OutputOption: TPrintOutputOptions = [poConsole]);
+var
+ tmpString, formattedString: String;
 begin
   if OutputOption = [] then OutputOption := [poConsole, poGrowl, poLibNotify];
 
-  if poConsole in OutputOption then WriteLn(Format(aString, Args));
+  tmpString := Format(aString, Args);
+  formattedString := StringReplace(tmpString, '\n', sLineBreak, [rfReplaceAll, rfIgnoreCase]);
+  formattedString := StringReplace(formattedString, '\t', #9, [rfReplaceAll, rfIgnoreCase]);
+
+  if poConsole in OutputOption then WriteLn(formattedString);
   if poGrowl in OutputOption then
   begin
     {$IFDEF DARWIN}
@@ -226,44 +396,89 @@ begin
   end;
 end;
 
-procedure TCommandApp.Option(aChar: Char; aDescription: String;
+procedure TCommandApp.Option(aChar: Char; aDescription: AnsiString;
   aCallback: TCmdOptionCallback);
 begin
-
+  Option([aChar], [], aDescription, aCallback);
 end;
 
-procedure TCommandApp.Option(aChars: array of Char; aDescription: String;
+procedure TCommandApp.Option(aChars: array of Char; aDescription: AnsiString;
   aCallback: TCmdOptionCallback);
 begin
-
+  Option(aChars, [], aDescription, aCallback);
 end;
 
-procedure TCommandApp.Option(aString, aDescription: String;
+procedure TCommandApp.Option(aString, aDescription: AnsiString;
   aCallback: TCmdOptionCallback);
 begin
-
+  Option([], [aString], aDescription, aCallback);
 end;
 
-procedure TCommandApp.Option(aStrings: array of String; aDescription: String;
+procedure TCommandApp.Option(aStrings: array of AnsiString; aDescription: AnsiString;
   aCallback: TCmdOptionCallback);
 begin
-
+  Option([], aStrings, aDescription, aCallback);
 end;
 
-procedure TCommandApp.Option(aChar: Char; aString, aDescription: String;
+procedure TCommandApp.Option(aChar: Char; aString, aDescription: AnsiString;
   aCallback: TCmdOptionCallback);
 begin
-
+  Option([aChar], [aString], aDescription, aCallback);
 end;
 
-procedure TCommandApp.Option(aChars: array of Char; aStrings: array of String;
-  aDescription: String; aCallback: TCmdOptionCallback);
+procedure TCommandApp.Option(aChars: array of Char; aStrings: array of AnsiString;
+  aDescription: AnsiString; aCallback: TCmdOptionCallback);
 begin
+  AddParamsToList(aChars, aStrings, aDescription);
 
+  if (HasParam(aChars, aStrings)) then aCallback('');
 end;
 
-procedure TCommandApp.Choose(aChooseText: String; aList: array of String;
-  aCallback: TCmdChooseCallback);
+procedure TCommandApp.OptionWithParameter(aChar: Char; aDescription,
+  aParameterName: AnsiString; aCallback: TCmdOptionCallback);
+begin
+  OptionWithParameter([aChar], [], aDescription, aParameterName, aCallback);
+end;
+
+procedure TCommandApp.OptionWithParameter(aChars: array of Char; aDescription,
+  aParameterName: AnsiString; aCallback: TCmdOptionCallback);
+begin
+  OptionWithParameter(aChars, [], aDescription, aParameterName, aCallback);
+end;
+
+procedure TCommandApp.OptionWithParameter(aString, aDescription,
+  aParameterName: AnsiString; aCallback: TCmdOptionCallback);
+begin
+  OptionWithParameter([], [aString], aDescription, aParameterName, aCallback);
+end;
+
+procedure TCommandApp.OptionWithParameter(aStrings: array of AnsiString;
+  aDescription, aParameterName: AnsiString; aCallback: TCmdOptionCallback);
+begin
+  OptionWithParameter([], aStrings, aDescription, aParameterName, aCallback);
+end;
+
+procedure TCommandApp.OptionWithParameter(aChar: Char; aString, aDescription,
+  aParameterName: AnsiString; aCallback: TCmdOptionCallback);
+begin
+  OptionWithParameter([aChar], [aString], aDescription, aParameterName, aCallback);
+end;
+
+procedure TCommandApp.OptionWithParameter(aChars: array of Char;
+  aStrings: array of AnsiString; aDescription, aParameterName: AnsiString;
+  aCallback: TCmdOptionCallback);
+var
+ paramPos: Integer;
+begin
+  AddParamsToList(aChars, aStrings, aDescription, aParameterName);
+
+  paramPos := GetParamPos(aChars, aStrings);
+
+  if (paramPos <> -1) then aCallback(ParamStr(paramPos + 1));
+end;
+
+procedure TCommandApp.Choose(aChooseText: AnsiString; aList: array of AnsiString;
+  aDefaultValue: Integer; aCallback: TCmdChooseCallback);
 var
   i, choiceInt: Integer;
   choice: ShortString;
@@ -271,77 +486,119 @@ begin
   WriteLn(aChooseText);
   for i := 0 to Length(aList) - 1 do
   begin
-    WriteLn(IntToStr(i) + ') ' + aList[i]);
+    if aDefaultValue = i then WriteLn('[' + IntToStr(i + 1) + ']) ' + aList[i])
+    else WriteLn(' ' + IntToStr(i + 1) + ' ) ' + aList[i]);
   end;
   ReadLn(choice);
 
-  if TryStrToInt(choice, choiceInt) then aCallback(choiceInt)
-  else WriteLn(rsInputNotNumber);
-end;
+  if (choice = '') then choice := IntToStr(aDefaultValue + 1);
 
-procedure TCommandApp.Choose(aChooseText: String; aList: array of Char;
-  aCallback: TCmdChooseCallback);
-var
-  i, choice: Integer;
-begin
-  WriteLn(aChooseText);
-  for i := 0 to Length(aList) - 1 do
+  if TryStrToInt(choice, choiceInt) then
   begin
-    WriteLn(IntToStr(i) + ') ' + aList[i]);
-  end;
-  ReadLn(choice);
-  aCallback(choice);
+    choiceInt := choiceInt - 1;
+    if choiceInt > Length(aList) - 1 then choiceInt := Length(aList) - 1;
+    aCallback(choiceInt)
+  end else WriteLn(rsInputNotNumber);
 end;
 
-procedure TCommandApp.Choose(aChooseText: String; aList: array of Single;
-  aCallback: TCmdChooseCallback);
+procedure TCommandApp.Choose(aChooseText: AnsiString; aList: array of Char;
+  aDefaultValue: Integer; aCallback: TCmdChooseCallback);
 var
-  i, choice: Integer;
+  i: Integer;
+  tmpList: array of AnsiString;
 begin
-  WriteLn(aChooseText);
+  SetLength(tmpList, Length(aList));
   for i := 0 to Length(aList) - 1 do
-  begin
-    WriteLn(IntToStr(i) + ') ' + FloatToStr(aList[i]));
-  end;
-  ReadLn(choice);
-  aCallback(choice);
+    tmpList[i] := aList[i];
+
+  Choose(aChooseText, tmpList, aDefaultValue, aCallback);
 end;
 
-procedure TCommandApp.Choose(aChooseText: String; aList: array of Integer;
-  aCallback: TCmdChooseCallback);
+procedure TCommandApp.Choose(aChooseText: AnsiString; aList: array of Single;
+  aDefaultValue: Integer; aCallback: TCmdChooseCallback);
 var
-  i, choice: Integer;
+  i: Integer;
+  tmpList: array of AnsiString;
 begin
-  WriteLn(aChooseText);
+  SetLength(tmpList, Length(aList));
   for i := 0 to Length(aList) - 1 do
-  begin
-    WriteLn(IntToStr(i) + ') ' + IntToStr(aList[i]));
-  end;
-  ReadLn(choice);
-  aCallback(choice);
+    tmpList[i] := FloatToStr(aList[i]);
+
+  Choose(aChooseText, tmpList, aDefaultValue, aCallback);
 end;
 
-procedure TCommandApp.Prompt(aPromptText: String; aCallback: TCmdPromptCallback
+procedure TCommandApp.Choose(aChooseText: AnsiString; aList: array of Integer;
+  aDefaultValue: Integer; aCallback: TCmdChooseCallback);
+var
+  i: Integer;
+  tmpList: array of AnsiString;
+begin
+  SetLength(tmpList, Length(aList));
+  for i := 0 to Length(aList) - 1 do
+    tmpList[i] := IntToStr(aList[i]);
+
+  Choose(aChooseText, tmpList, aDefaultValue, aCallback);
+end;
+
+procedure TCommandApp.Prompt(aPromptText: AnsiString; aCallback: TCmdPromptCallback
   );
 begin
-
+  Prompt(aPromptText, '', aCallback);
 end;
 
-(*procedure TCommandApp.Password(aPasswordText: String; aMaskChar: Char;
+procedure TCommandApp.Prompt(aPromptText, aDefaultText: AnsiString;
+  aCallback: TCmdPromptCallback);
+var
+  promptChoice: String;
+begin
+  WriteLn('');
+  if (aDefaultText = '') then Write(aPromptText + ' ')
+  else Write(aPromptText + ' [' + aDefaultText + '] ');
+  Read(promptChoice);
+  WriteLn('');
+
+  aCallback(promptChoice);
+end;
+
+(*procedure TCommandApp.Password(aPasswordText: AnsiString; aMaskChar: Char;
   aCallback: TCmdPasswordCallback);
 begin
 
 end;*)
 
-procedure TCommandApp.Confirm(aConfirmText: String;
+procedure TCommandApp.Confirm(aConfirmText: AnsiString;
   aCallback: TCmdConfirmCallback);
 begin
+  Confirm(aConfirmText, true, aCallback);
+end;
 
+procedure TCommandApp.Confirm(aConfirmText: AnsiString; aDefaultValue: Boolean;
+  aCallback: TCmdConfirmCallback);
+var
+  confirmChoice, tmpString: String;
+begin
+  WriteLn('');
+
+  if aDefaultValue then Write(aConfirmText + ' ([Y]es / [N]o) [Yes] ')
+  else Write(aConfirmText + ' ([Y]es / [N]o) [No] ');
+
+  Read(confirmChoice);
+
+  tmpString := LowerCase(confirmChoice);
+
+  if aDefaultValue then tmpString := 'y'
+  else tmpString := 'n';
+
+  if ((tmpString = 'y') or (tmpString = 'yes') or (tmpString = '1') or (tmpString = 'true')) then aCallback(true)
+  else aCallback(false);
 end;
 
 procedure TCommandApp.Execute;
 begin
+  Option('v', 'version', 'Shows the version number', @Self.ShowVersion);
+  Option('h', 'help', 'Shows this help screen.', @Self.ShowHelp);
 
+  if ParamCount = 0 then ShowHelp('');
 end;
 
 end.

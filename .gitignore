@@ -44,14 +44,6 @@ Thumbs.db
 
 # Additional stuff #
 ####################
-bin/*.html
-bin/*.a
-bin/*.dbg
-bin/*.or
-bin/main
-_rawdata
-
-# Excluded files #
-##################
-!lib/MacOSX/libSDLMain.a
-!_rawdata/Finished
+example_list
+example_option
+example_option2
