@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Confessor by Stoney-FD</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Confessor</h1>
+        <p>Command line library for FreePascal/Delphi</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/Stoney-FD/confessor" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/Stoney-FD/confessor/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/Stoney-FD/confessor/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h1>Colipas</h1>
+
+<p>Command-line library for FreePascal/Delphi</p>
+
+<p>Colipas is inspired by Commander (<a href="http://visionmedia.github.com/commander/">http://visionmedia.github.com/commander/</a>) and Commander.js (<a href="http://tjholowaychuk.com/post/9103188408/commander-js-nodejs-command-line-interfaces-made-easy">http://tjholowaychuk.com/post/9103188408/commander-js-nodejs-command-line-interfaces-made-easy</a>). Originally, I wanted to name the project Commander.pas, but because it's not a 1:1 port of the Commander interface, Colipas was the next name I came up with.</p>
+
+<p>Sorry, if a few functions/procedures are a bit verbose. I've been doing a lot of Objective-C lately.</p>
+
+<h2>Features</h2>
+
+<ul>
+<li>Uses callbacks to actions<br>
+</li>
+<li>Utilize lists<br>
+</li>
+<li>Confirm messages (yes/no)<br>
+</li>
+<li>Prompts with additional default statement<br>
+</li>
+<li>Add options to your command-line apps as one or multiple char, one or more strings or both of those options<br>
+</li>
+<li>Options with parameter support<br>
+</li>
+<li>Supports LibNotify and Growl (through GrowlNotify) if available<br>
+</li>
+</ul><h2>Usage</h2>
+
+<ol>
+<li>Include Colipas in your application<br>
+</li>
+<li>Sub-class TCommandApp<br>
+</li>
+<li>Implement the method Execute in your sub-class and make sure it calls the inherited method<br>
+</li>
+<li>Create an instance of your sub-class.<br>
+</li>
+<li>In your main code file add call the methods you need, for example:<br>
+   MySubClass.Print(SomeString, [poLibNotify, poGrowl]); //&lt; This send a notification to LibNotify or Growl if available<br>
+   MySubClass.Option('s', 'someoption', @CallbackToMyOption); //&lt; If the user would be call the application with the parameter<br>
+     // -s or --someoption, CallbackToMyOption would be called, whereas CallbackMyOption should be implemented as a method of MySubClass<br>
+</li>
+<li>Call MySubClass.Execute<br>
+(You need to rename MySubClass to the actual class)<br>
+</li>
+</ol><p>Note:
+  Some features are missing when using Colipas on Windows.  </p>
+
+<p>See the examples for detailed information on usage.  </p>
+
+<p>It is recommended to use Colipas with InstantFPC (<a href="http://wiki.lazarus.freepascal.org/InstantFPC">http://wiki.lazarus.freepascal.org/InstantFPC</a>).  </p>
+
+<h2>License</h2>
+
+<p>MIT license, see LICENSE.txt for more information.  </p>
+
+<h2>Author</h2>
+
+<p>(C) Johannes Stein 2011<br><a href="http://www.freeze-dev.com">http://www.freeze-dev.com</a><br><a href="mailto:johannesstein@freeze-dev.com">johannesstein@freeze-dev.com</a>  </p>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/Stoney-FD">Stoney-FD</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+    
+  </body>
+</html>
